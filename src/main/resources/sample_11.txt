@@ -1,3 +1,4 @@
+BinCapacity NumberOfItems
 10000 141
 2472
 2371

@@ -5,10 +5,7 @@
  */
 package main;
 
-import POJO.Bin;
-import POJO.Piece;
-import POJO.Problem;
-import java.util.ArrayList;
+import SolutionBuilder.OneBinByPiece;
 
 /**
  *
@@ -18,25 +15,49 @@ public class Main {
 
     /**
      * @param args the command line arguments
+     * @throws java.lang.Exception
      */
     public static void main(String[] args) throws Exception {
-        // TODO code application logic here
-        Piece p1 = new Piece(5);
-        Piece p2 = new Piece(3);
-        Piece p3 = new Piece(4);
-        
-        ArrayList<Piece> pieces = new ArrayList<>();
-        pieces.add(p1);
-        pieces.add(p2);
-        Bin bin = new Bin(9, pieces);
-        
-        System.out.println(bin);
-        
-//        Problem problem = new Problem("binpack1d_001.txt");
+        //Problem problem = new Problem("binpack1d_001.txt");
         //Problem problem = new Problem("pieceGreaterThanBinCapacity.txt");
-        Problem problem = new Problem("easySample.txt");
-        System.out.println(problem);
+        
+        //Questions.q2();
+        
+        //Questions.q3();
+        
+        Questions.q4();
 
+        /*
+        String str = "";
+        for (int i = 0; i < 13; i++) {
+            System.out.println("PROBLEM i=" + i);
+            str = "sample_";
+            if (i < 10) {
+                str += "0";
+            }
+            str += i + ".txt";
+            
+            System.out.println("Problem file name: " + str);
+            
+            System.out.println("\n");
+            
+            Problem problem = new Problem(str);
+            System.out.println(problem);
+            System.out.println("Best solution: " + problem.getBestSolution().getNumberOfBins());
+
+            System.out.println("\n\n\nEXCHANGE ITEMS SOLUTION");
+
+            Solution exchangedItemSolution = problem.exchangeItems();
+            System.out.println(exchangedItemSolution);
+
+            System.out.println("\n\n\nMOVE ITEM SOLUTION");
+
+            Solution moveItemSolution = problem.movePiece();
+            System.out.println(moveItemSolution);
+
+            System.out.println("\n\n\n");
+            
+        }
+         */
     }
-    
 }

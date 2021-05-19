@@ -1,3 +1,4 @@
+BinCapacity NumberOfItems
 120 500
 100
 100

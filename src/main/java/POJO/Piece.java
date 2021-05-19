@@ -11,7 +11,7 @@ package POJO;
  */
 public class Piece {
 
-    private int size;
+    private final int size;
 
     public Piece(int size) {
         this.size = size;
@@ -23,11 +23,7 @@ public class Piece {
 
     @Override
     public String toString() {
-        return String.join("\n",
-                super.toString() + " {",
-                "   size: " + this.size,
-                "}"
-        );
+        return super.toString() + " { size: " + this.size + " }";
     }
     
     

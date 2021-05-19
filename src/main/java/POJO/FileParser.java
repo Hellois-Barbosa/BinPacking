@@ -33,13 +33,15 @@ public class FileParser {
         ArrayList<Piece> pieces = new ArrayList<>();
         while (sc.hasNextLine()) {
             Piece newPiece = new Piece(Integer.parseInt(sc.nextLine()));
-            
+
             //All pieces must be smaller than or equals to the bin capacity. Throw if there are not.
-            if(newPiece.getSize() > binCapacity)
+            if (newPiece.getSize() > binCapacity) {
+                System.out.println("BinCapacity: " + binCapacity + ", piece size: " + newPiece.getSize());
                 throw new Exception("Piece's size must be smaller than or equals to the bin capacity (here: " + binCapacity + ")");
-            
+            }
+
             pieces.add(newPiece);
-        }        
+        }
 
         //Build result object
         HashMap<String, Object> result = new HashMap<>();

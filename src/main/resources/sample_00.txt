@@ -1,3 +1,4 @@
+BinCapacity NumberOfItems
 9 24
 6
 6
