@@ -39,6 +39,18 @@ public class Bin {
         }
     }
 
+    public int getPiecesSpace() {
+        return this.size - this.freeSpace;
+    }
+
+    public boolean isEmpty() {
+        if (this.getNbOfPieces() == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public int getFreeSpace() {
         return freeSpace;
     }
@@ -47,8 +59,16 @@ public class Bin {
         return this.pieces.size();
     }
 
-    public boolean addPiece(Piece p) {
+    public boolean canAdd(Piece p) {
         if (p.getSize() <= this.freeSpace) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean addPiece(Piece p) {
+        if (canAdd(p)) {
             this.freeSpace -= p.getSize();
             this.pieces.add(p);
             return true;
@@ -56,7 +76,7 @@ public class Bin {
             return false;
         }
     }
-    
+
     public void removePiece(int index) {
         Piece removedPiece = this.pieces.remove(index);
         this.freeSpace += removedPiece.getSize();
@@ -64,8 +84,7 @@ public class Bin {
 
     public Piece getPiece(int index) {
         return this.pieces.get(index);
-    }    
-    
+    }
 
     @Override
     public String toString() {
@@ -88,7 +107,61 @@ public class Bin {
             }
         }
         str += "]";
+        str += ", freespace: " + this.freeSpace;
         return str;
+    }
+
+    public Bin clone() {
+        Bin newBin = new Bin(this.size);
+        this.pieces.stream().forEach((piece) -> {
+            newBin.addPiece(piece.clone());
+        });
+        return newBin;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+
+        if (!(obj instanceof Bin)) {
+            return false;
+        }
+
+        Bin binToCompare = (Bin) obj;
+
+        return this.pieces.equals(binToCompare.pieces) && this.size == binToCompare.size;
+    }
+
+    public static boolean movePieceBetweenBin(int p_piece_index, Bin p_origin_bin, Bin p_final_bin) {
+        //Get piece reference
+        Piece pieceToMove = p_origin_bin.getPiece(p_piece_index);
+
+        //Add the piece to the final bin if possible and keep the result
+        boolean moveSuccessfuly = p_final_bin.addPiece(pieceToMove);
+
+        //Remove the piece to move from the first bin if move is possible
+        if (moveSuccessfuly) {
+            p_origin_bin.removePiece(p_piece_index);
+        }
+
+        //Send if move works well or not
+        return moveSuccessfuly;
+    }
+
+    public static void exchangePiecesBetweenBin(int p_piece_A_index, Bin p_bin_A, int p_piece_B_index, Bin p_bin_B) {
+        //Retrieve pieces
+        Piece pieceA = p_bin_A.getPiece(p_piece_A_index);
+        Piece pieceB = p_bin_B.getPiece(p_piece_B_index);
+
+        //Remove pieces from their original bins
+        p_bin_A.removePiece(p_piece_A_index);
+        p_bin_B.removePiece(p_piece_B_index);
+
+        //Insert pieces in their new bins
+        p_bin_A.addPiece(pieceB);
+        p_bin_B.addPiece(pieceA);
     }
 
 }

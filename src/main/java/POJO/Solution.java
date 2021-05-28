@@ -5,8 +5,9 @@
  */
 package POJO;
 
+import SolutionFitness.NearlyFullBins;
+import SolutionFitness.SolutionFitness;
 import java.util.ArrayList;
-import com.google.gson.Gson;
 
 /**
  *
@@ -16,62 +17,126 @@ public class Solution {
 
     private ArrayList<Bin> bins;
 
-    public Solution() {
-    }
+    private SolutionFitness fitnessStrategy;
+
+    private int fitness;
 
     public Solution(ArrayList<Bin> bins) {
         this.bins = bins;
+        this.fitnessStrategy = new NearlyFullBins();
+        this.fitness = this.calcSolutionFitness();
     }
 
     public int getNumberOfBins() {
         return this.bins.size();
     }
-    
-    public Solution movePiece() {
+
+    public int getFitness() {
+        return this.fitness;
+    }
+
+    public ArrayList<Bin> getBins() {
+        return bins;
+    }
+
+    public SolutionFitness getFitnessStrategy() {
+        return fitnessStrategy;
+    }
+
+    private int calcSolutionFitness() {
+        return this.fitnessStrategy.calculate(this);
+    }
+
+    public Solution movePiece(boolean p_log_on) {
         //Clone the current solution
-        Gson gson = new Gson();
-        Solution result = gson.fromJson(gson.toJson(this), Solution.class);
-        
+        Solution clonedSolution = this.clone();
+
         //Set up exchange variables
         boolean moveDone = false;
         int nbRetry = 0;
         int retryLimit = 1000;
-        
-        while(!moveDone && nbRetry < retryLimit) {
+
+        while (!moveDone && nbRetry < retryLimit) {
             //Draw a random bin index
-            int randomBinIndex = (int) (Math.random() * result.bins.size());
+            int randomBinIndex = (int) (Math.random() * clonedSolution.getBins().size());
             int finalRandomBinIndex = randomBinIndex;
 
             //Draw a second random bin index different to the first one
             while (randomBinIndex == finalRandomBinIndex) {
-                finalRandomBinIndex = (int) (Math.random() * result.bins.size());
+                finalRandomBinIndex = (int) (Math.random() * clonedSolution.getBins().size());
             }
-            
+
             //Get selected bin
-            Bin bin = result.bins.get(randomBinIndex);
-            
+            Bin bin = clonedSolution.getBins().get(randomBinIndex);
+
             //Draw random piece index
-            int randomPieceIndex = (int) (Math.random() * this.bins.get(randomBinIndex).getNbOfPieces());
-            
-            if(moveBinPiece(randomPieceIndex, randomBinIndex, finalRandomBinIndex)) {
+            int randomPieceIndex = (int) (Math.random() * bin.getNbOfPieces());
+
+            if (clonedSolution.moveBinPiece(randomPieceIndex, randomBinIndex, finalRandomBinIndex)) {
                 moveDone = true;
-                System.out.println("Move done after " + nbRetry + " retry !");
-                System.out.println("Piece n° " + randomPieceIndex + " of bin n° " + randomBinIndex);
-                System.out.println("Added in bin n° " + finalRandomBinIndex);
+
+                if (p_log_on) {
+                    System.out.println("\nMove done after " + (nbRetry + 1) + " retry !");
+                    System.out.println("Piece n°" + randomPieceIndex + " of bin n°" + randomBinIndex);
+                    System.out.println("Added in bin n°" + finalRandomBinIndex + "\n");
+                }
             } else {
                 //If is not possible retry
-                System.out.println("Retry r: " + nbRetry);
+                if (p_log_on) {
+                    System.out.println("Retry n°" + nbRetry);
+                }
                 nbRetry++;
             }
         }
-        
-        return result;
+        if (nbRetry == retryLimit) {
+            System.out.println("Ended without found any solution");
+        }
+        System.out.println("Cloned solution fitness: " + clonedSolution.getFitness());
+        return clonedSolution;
     }
 
-    public Solution exchangeItems() {
+    public Move movePieceMoves() {
         //Clone the current solution
-        Gson gson = new Gson();
-        Solution result = gson.fromJson(gson.toJson(this), Solution.class);
+        Solution clonedSolution = this.clone();
+
+        //Varaiable to return
+        BinMove binMove = null;
+
+        //Set up exchange variables
+        boolean moveDone = false;
+        int nbRetry = 0;
+        int retryLimit = 1000;
+
+        while (!moveDone && nbRetry < retryLimit) {
+            //Draw a random bin index
+            int randomBinIndex = (int) (Math.random() * clonedSolution.getBins().size());
+            int finalRandomBinIndex = randomBinIndex;
+
+            //Draw a second random bin index different to the first one
+            while (randomBinIndex == finalRandomBinIndex) {
+                finalRandomBinIndex = (int) (Math.random() * clonedSolution.getBins().size());
+            }
+
+            //Get selected bin
+            Bin bin = clonedSolution.getBins().get(randomBinIndex);
+            Bin finalBin = clonedSolution.getBins().get(finalRandomBinIndex);
+
+            //Draw random piece index
+            int randomPieceIndex = (int) (Math.random() * bin.getNbOfPieces());
+
+            if (clonedSolution.canMoveBinPiece(randomPieceIndex, randomBinIndex, finalRandomBinIndex)) {
+                moveDone = true;
+                binMove = new BinMove(randomPieceIndex, randomBinIndex, finalRandomBinIndex, bin.getNbOfPieces(), finalBin.getNbOfPieces());
+            } else {
+                nbRetry++;
+            }
+        }
+        return binMove;
+    }
+
+    public Solution exchangeItems(boolean p_log_on) {
+        //Clone the current solution
+        Solution clonedSolution = this.clone();
 
         //Set up exchange variables
         boolean exchangeDone = false;
@@ -81,88 +146,163 @@ public class Solution {
         //Run while exhange is not doing or retry number is not out of bounds
         while (!exchangeDone && nbRetry < retryLimit) {
             //Draw a first random bin index
-            int firstRandomBinIndex = (int) (Math.random() * result.bins.size());
+            int firstRandomBinIndex = (int) (Math.random() * clonedSolution.getBins().size());
             int secondRandomBinIndex = firstRandomBinIndex;
 
             //Draw a second random bin index different to the first one
             while (firstRandomBinIndex == secondRandomBinIndex) {
-                secondRandomBinIndex = (int) (Math.random() * result.bins.size());
+                secondRandomBinIndex = (int) (Math.random() * clonedSolution.getBins().size());
             }
-            
+
             //Get selected bins
-            Bin firstBin = result.bins.get(firstRandomBinIndex);
-            Bin secondBin = result.bins.get(secondRandomBinIndex);
-            
+            Bin firstBin = clonedSolution.getBins().get(firstRandomBinIndex);
+            Bin secondBin = clonedSolution.getBins().get(secondRandomBinIndex);
+
             //Draw random pieces indexes
             int firstRandomPieceIndex = (int) (Math.random() * firstBin.getNbOfPieces());
             int secondRandomPieceIndex = (int) (Math.random() * secondBin.getNbOfPieces());
-            
-             //Retrieve the good ones from previous selected bins
+
+            //Retrieve the good ones from previous selected bins
             Piece firstPiece = firstBin.getPiece(firstRandomPieceIndex);
             Piece secondPiece = secondBin.getPiece(secondRandomPieceIndex);
+
+            int firstPieceSize = firstPiece.getSize();
+            int secondPieceSize = secondPiece.getSize();
 
             //Check if exchange is possible according to the new free space in each bins
             int newFirstBinFreeSpace = firstBin.getFreeSpace() + firstPiece.getSize();
             int newSecondBinFreeSpace = secondBin.getFreeSpace() + secondPiece.getSize();
-            if (secondPiece.getSize() <= newFirstBinFreeSpace && firstPiece.getSize() <= newSecondBinFreeSpace) {
-                moveBinPiece(firstRandomPieceIndex, firstRandomBinIndex, secondRandomBinIndex);
-                moveBinPiece(secondRandomPieceIndex, secondRandomBinIndex, firstRandomBinIndex);
-                
+            if (firstPieceSize != secondPieceSize && secondPieceSize <= newFirstBinFreeSpace && firstPieceSize <= newSecondBinFreeSpace) {
+                exchangeBinPieces(firstRandomPieceIndex, firstRandomBinIndex, secondRandomPieceIndex, secondRandomBinIndex);
                 exchangeDone = true;
-                System.out.println("Exchange done after " + nbRetry + " retry !");
-                System.out.println("Piece n° " + firstRandomPieceIndex + " of bins n° " + firstRandomBinIndex + "(size: " + firstPiece.getSize() + ")");
-                System.out.println("Exchanged with");
-                System.out.println("Piece n° " + secondRandomPieceIndex + " of bins n° " + secondRandomBinIndex + "(size: " + secondPiece.getSize() + ")");
-                
+
+                if (p_log_on) {
+                    System.out.println("\nExchange done after " + (nbRetry + 1) + " retry !");
+                    System.out.println("Piece n°" + firstRandomPieceIndex + " of bins n°" + firstRandomBinIndex + " (size: " + firstPieceSize + ")");
+                    System.out.println("Exchanged with");
+                    System.out.println("Piece n°" + secondRandomPieceIndex + " of bins n°" + secondRandomBinIndex + " (size: " + secondPieceSize + ")\n");
+                }
             } else {
                 //If is not possible retry
-                System.out.println("Retry r: " + nbRetry);
+                if (p_log_on) {
+                    System.out.println("Retry n°" + nbRetry);
+                }
                 nbRetry++;
             }
-         
-//            //Retrieve the good ones from previous selected bins
-//            Piece firstPiece = firstBin.getPiece(firstRandomPieceIndex);
-//            Piece secondPiece = secondBin.getPiece(secondRandomPieceIndex);
-//
-//            //Check if exchange is possible according to the new free space in each bins
-//            int newFirstBinFreeSpace = firstBin.getFreeSpace() + firstPiece.getSize();
-//            int newSecondBinFreeSpace = secondBin.getFreeSpace() + secondPiece.getSize();
-//            if (secondPiece.getSize() <= newFirstBinFreeSpace && firstPiece.getSize() <= newSecondBinFreeSpace) {
-//                //Exchange pieces
-//                firstBin.removePiece(firstRandomPieceIndex);
-//                secondBin.removePiece(secondRandomPieceIndex);
-//
-//                firstBin.addPiece(firstPiece);
-//                secondBin.addPiece(secondPiece);
-//
-//                exchangeDone = true;
-//                System.out.println("Exchange done after " + nbRetry + " retry !");
-//                System.out.println("Piece n° " + firstRandomPieceIndex + " of bins n° " + firstRandomBinIndex);
-//                System.out.println("Exchanged with");
-//                System.out.println("Piece n° " + secondRandomPieceIndex + " of bins n° " + secondRandomBinIndex);
-//            } else {
-//                //If is not possible retry
-//                System.out.println("Retry r: " + nbRetry);
-//                nbRetry++;
-//            }
         }
-
-        //How to get the good piece, if the piece you would like to exchange had a size of the bin it is not relevant to retrieve it
-        return result;
+        System.out.println("Cloned solution fitness: " + clonedSolution.getFitness());
+        return clonedSolution;
     }
-    
-    private boolean moveBinPiece(int p_piece_index, int p_piece_bin_index, int p_final_bin_index) {
+
+    public Move exchangeItemsMoves() {
+        //Clone the current solution
+        Solution clonedSolution = this.clone();
+
+        //Return variables
+        BinExchange binExchange = null;
+
+        //Set up exchange variables
+        boolean exchangeDone = false;
+        int nbRetry = 0;
+        int retryLimit = 1000;
+
+        //Run while exhange is not doing or retry number is not out of bounds
+        while (!exchangeDone && nbRetry < retryLimit) {
+            //Draw a first random bin index
+            int firstRandomBinIndex = (int) (Math.random() * clonedSolution.getBins().size());
+            int secondRandomBinIndex = firstRandomBinIndex;
+
+            //Draw a second random bin index different to the first one
+            while (firstRandomBinIndex == secondRandomBinIndex) {
+                secondRandomBinIndex = (int) (Math.random() * clonedSolution.getBins().size());
+            }
+
+            //Get selected bins
+            Bin firstBin = clonedSolution.getBins().get(firstRandomBinIndex);
+            Bin secondBin = clonedSolution.getBins().get(secondRandomBinIndex);
+
+            //Draw random pieces indexes
+            int firstRandomPieceIndex = (int) (Math.random() * firstBin.getNbOfPieces());
+            int secondRandomPieceIndex = (int) (Math.random() * secondBin.getNbOfPieces());
+
+            //Retrieve the good ones from previous selected bins
+            Piece firstPiece = firstBin.getPiece(firstRandomPieceIndex);
+            Piece secondPiece = secondBin.getPiece(secondRandomPieceIndex);
+
+            int firstPieceSize = firstPiece.getSize();
+            int secondPieceSize = secondPiece.getSize();
+
+            //Check if exchange is possible according to the new free space in each bins
+            int newFirstBinFreeSpace = firstBin.getFreeSpace() + firstPiece.getSize();
+            int newSecondBinFreeSpace = secondBin.getFreeSpace() + secondPiece.getSize();
+            if (firstPieceSize != secondPieceSize && secondPieceSize <= newFirstBinFreeSpace && firstPieceSize <= newSecondBinFreeSpace) {
+                binExchange = new BinExchange(new BinMove(firstRandomPieceIndex, firstRandomBinIndex, secondRandomBinIndex, firstBin.getNbOfPieces(), secondBin.getNbOfPieces()), new BinMove(secondRandomPieceIndex, secondRandomBinIndex, firstRandomBinIndex, secondBin.getNbOfPieces(), firstBin.getNbOfPieces()));
+                exchangeDone = true;
+            } else {
+                nbRetry++;
+            }
+        }
+        return binExchange;
+    }
+
+    public boolean moveBinPiece(int p_piece_index, int p_piece_bin_index, int p_final_bin_index) {
         //Get the piece bin
         Bin firstBin = this.bins.get(p_piece_bin_index);
-        
+
+        //Get the final bin
+        Bin finalBin = this.bins.get(p_final_bin_index);
+
+        boolean moveSuccessfuly = Bin.movePieceBetweenBin(p_piece_index, firstBin, finalBin);
+
+        //Remove empty bin if the last piece was moved
+        if (firstBin.isEmpty()) {
+            this.bins.remove(p_piece_bin_index);
+        }
+
+        this.fitness = this.calcSolutionFitness();
+
+        //Send if move works well or not
+        return moveSuccessfuly;
+    }
+
+    public void exchangeBinPieces(int p_piece_A_index, int p_bin_index_A, int p_piece_B_index, int p_bin_index_B) {
+        //Retrieve bins
+        Bin firstBin = this.bins.get(p_bin_index_A);
+        Bin finalBin = this.bins.get(p_bin_index_B);
+
+        Bin.exchangePiecesBetweenBin(p_piece_A_index, firstBin, p_piece_B_index, finalBin);
+
+        this.fitness = this.calcSolutionFitness();
+    }
+
+    private boolean canMoveBinPiece(int p_piece_index, int p_piece_bin_index, int p_final_bin_index) {
+        //Get the piece bin
+        Bin firstBin = this.bins.get(p_piece_bin_index);
+
         //Get piece reference
         Piece pieceToMove = firstBin.getPiece(p_piece_index);
-        
-        //Remove the piece to move from the first bin
-        firstBin.removePiece(p_piece_index);
-        
-        //Add the piece to the final bin
-        return this.bins.get(p_final_bin_index).addPiece(pieceToMove);      
+
+        //Test if the piece can be added to the final bin
+        return this.bins.get(p_final_bin_index).canAdd(pieceToMove);
+    }
+
+    public static boolean listContains(ArrayList<Solution> p_solutions, Solution p_solution_to_find) {
+        boolean isContains = false;
+        for (int i = 0; i < p_solutions.size(); i++) {
+            if (p_solution_to_find.equals(p_solutions.get(i))) {
+                isContains = true;
+                break;
+            }
+        }
+        return isContains;
+    }
+
+    public Solution clone() {
+        ArrayList<Bin> copy = new ArrayList<>();
+        this.bins.stream().forEach((bin) -> {
+            copy.add(bin.clone());
+        });
+        return new Solution(copy);
     }
 
     @Override
@@ -183,4 +323,20 @@ public class Solution {
                 "}"
         );
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+
+        if (!(obj instanceof Solution)) {
+            return false;
+        }
+
+        Solution solutionToCompare = (Solution) obj;
+
+        return this.bins.equals(solutionToCompare.bins) && this.fitnessStrategy.getClass() == solutionToCompare.fitnessStrategy.getClass() && this.fitness == solutionToCompare.fitness;
+    }
+
 }
