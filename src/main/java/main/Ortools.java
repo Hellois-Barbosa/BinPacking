@@ -21,7 +21,7 @@ public class Ortools {
     public static void solve(Problem p_problem_to_solve) throws Exception {
         //Here, number of bins is equal to the number of item because it is the maximum bin to use
         int itemsNumber = p_problem_to_solve.getPieces().size();
-        int binsNumber = p_problem_to_solve.getBestSolution().getNumberOfBins();
+        int binsNumber = p_problem_to_solve.getSolution().getNumberOfBins();
 
         //Load ortools libraries
         Loader.loadNativeLibraries();

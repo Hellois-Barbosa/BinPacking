@@ -5,7 +5,11 @@
  */
 package main;
 
-import SolutionBuilder.OneBinByPiece;
+import POJO.Bin;
+import POJO.Piece;
+import POJO.Problem;
+import POJO.Solution;
+import java.util.ArrayList;
 
 /**
  *
@@ -20,44 +24,36 @@ public class Main {
     public static void main(String[] args) throws Exception {
         //Problem problem = new Problem("binpack1d_001.txt");
         //Problem problem = new Problem("pieceGreaterThanBinCapacity.txt");
-        
+
         //Questions.q2();
-        
         //Questions.q3();
-        
-        Questions.q4();
+        //Questions.q4();
+        //Questions.q5();
+        //Questions.q6();
+        Questions.q7();
 
-        /*
-        String str = "";
-        for (int i = 0; i < 13; i++) {
-            System.out.println("PROBLEM i=" + i);
-            str = "sample_";
-            if (i < 10) {
-                str += "0";
-            }
-            str += i + ".txt";
-            
-            System.out.println("Problem file name: " + str);
-            
-            System.out.println("\n");
-            
-            Problem problem = new Problem(str);
-            System.out.println(problem);
-            System.out.println("Best solution: " + problem.getBestSolution().getNumberOfBins());
-
-            System.out.println("\n\n\nEXCHANGE ITEMS SOLUTION");
-
-            Solution exchangedItemSolution = problem.exchangeItems();
-            System.out.println(exchangedItemSolution);
-
-            System.out.println("\n\n\nMOVE ITEM SOLUTION");
-
-            Solution moveItemSolution = problem.movePiece();
-            System.out.println(moveItemSolution);
-
-            System.out.println("\n\n\n");
-            
-        }
-         */
+//        ArrayList<Piece> pc = new ArrayList<>();
+//        pc.add(new Piece(1));
+//        pc.add(new Piece(2));
+//        pc.add(new Piece(3));
+//        Bin A = new Bin(10, pc);
+//        
+//        ArrayList<Piece> pc2 = new ArrayList<>();
+//        pc2.add(new Piece(4));
+//        pc2.add(new Piece(5));
+//        Bin B = new Bin(10, pc2);
+//        
+//        ArrayList<Piece> pc3 = new ArrayList<>();
+//        pc3.add(new Piece(4));
+//        pc3.add(new Piece(4));
+//        Bin C = new Bin(10, pc3);
+//        
+//        ArrayList<Bin> bins = new ArrayList<>();
+//        bins.add(A);
+//        bins.add(B);
+//        bins.add(C);
+//        
+//        Solution s = new Solution(bins);
+//        System.out.println(Problem.tabuSearch(s, 100, 100, 1).toString());
     }
 }

@@ -14,7 +14,7 @@ import java.util.ArrayList;
  *
  * @author Helloïs BARBOSA
  */
-public class OneBinByPiece implements SolutionBuilder {
+public class OnePiecePerBin implements SolutionBuilder {
 
     @Override
     public Solution build(ArrayList<Piece> p_pieces, int p_bin_size) {
