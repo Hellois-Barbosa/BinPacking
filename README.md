@@ -16,7 +16,9 @@ I used JDK ```1.8```.
 
 ## Usage
 
-All subject questions were aswered in the report and his annex. You may also **uncomment the line corresponding to the question to be executed** as follows.
+All subject questions were aswered in the report and his annex. You will find them in ```doc``` folder in the root of the project.
+
+You may also **uncomment the line corresponding to the question to be executed** as follows.
 
 ```java
 public class Main {
