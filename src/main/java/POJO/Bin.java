@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class Bin {
 
     private final int size;
-    private ArrayList<Piece> pieces;
+    private final ArrayList<Piece> pieces;
     private int freeSpace;
 
     public Bin(int size) {
@@ -44,11 +44,7 @@ public class Bin {
     }
 
     public boolean isEmpty() {
-        if (this.getNbOfPieces() == 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.getNbOfPieces() == 0;
     }
 
     public int getFreeSpace() {
@@ -60,11 +56,7 @@ public class Bin {
     }
 
     public boolean canAdd(Piece p) {
-        if (p.getSize() <= this.freeSpace) {
-            return true;
-        } else {
-            return false;
-        }
+        return p.getSize() <= this.freeSpace;
     }
 
     public boolean addPiece(Piece p) {

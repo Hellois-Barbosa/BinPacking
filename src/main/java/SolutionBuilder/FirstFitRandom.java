@@ -5,9 +5,7 @@
  */
 package SolutionBuilder;
 
-import POJO.Bin;
 import POJO.Piece;
-import POJO.Solution;
 import java.util.ArrayList;
 import java.util.Collections;
 

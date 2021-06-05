@@ -15,9 +15,9 @@ import java.util.ArrayList;
  */
 public class Solution {
 
-    private ArrayList<Bin> bins;
+    private final ArrayList<Bin> bins;
 
-    private SolutionFitness fitnessStrategy;
+    private final SolutionFitness fitnessStrategy;
 
     private int fitness;
 
@@ -89,9 +89,10 @@ public class Solution {
             }
         }
         if (nbRetry == retryLimit) {
-            System.out.println("Ended without found any solution");
+            if (p_log_on) {
+                System.out.println("Ended without found any solution");
+            }
         }
-        System.out.println("Cloned solution fitness: " + clonedSolution.getFitness());
         return clonedSolution;
     }
 
@@ -190,7 +191,6 @@ public class Solution {
                 nbRetry++;
             }
         }
-        System.out.println("Cloned solution fitness: " + clonedSolution.getFitness());
         return clonedSolution;
     }
 

@@ -5,10 +5,6 @@
  */
 package main;
 
-import POJO.Bin;
-import POJO.Piece;
-import POJO.Problem;
-import POJO.Solution;
 import java.util.ArrayList;
 
 /**
@@ -22,38 +18,97 @@ public class Main {
      * @throws java.lang.Exception
      */
     public static void main(String[] args) throws Exception {
-        //Problem problem = new Problem("binpack1d_001.txt");
-        //Problem problem = new Problem("pieceGreaterThanBinCapacity.txt");
-
         //Questions.q2();
         //Questions.q3();
         //Questions.q4();
         //Questions.q5();
         //Questions.q6();
-        Questions.q7();
+        //Questions.q7();
+    }
 
-//        ArrayList<Piece> pc = new ArrayList<>();
-//        pc.add(new Piece(1));
-//        pc.add(new Piece(2));
-//        pc.add(new Piece(3));
-//        Bin A = new Bin(10, pc);
-//        
-//        ArrayList<Piece> pc2 = new ArrayList<>();
-//        pc2.add(new Piece(4));
-//        pc2.add(new Piece(5));
-//        Bin B = new Bin(10, pc2);
-//        
-//        ArrayList<Piece> pc3 = new ArrayList<>();
-//        pc3.add(new Piece(4));
-//        pc3.add(new Piece(4));
-//        Bin C = new Bin(10, pc3);
-//        
-//        ArrayList<Bin> bins = new ArrayList<>();
-//        bins.add(A);
-//        bins.add(B);
-//        bins.add(C);
-//        
-//        Solution s = new Solution(bins);
-//        System.out.println(Problem.tabuSearch(s, 100, 100, 1).toString());
+    public static void displayRes(ArrayList<ArrayList<Integer>> p_res) {
+        ArrayList<Double> var = new ArrayList<>();
+        ArrayList<Double> moyenne = new ArrayList<>();
+        ArrayList<Integer> min = new ArrayList<>();
+
+        int nbOfPblm = p_res.size();
+        for (int i = 0; i < nbOfPblm; i++) {
+            ArrayList<Integer> currentProblemRes = p_res.get(i);
+
+            //Calc moyenne and min
+            int resPerPblm = currentProblemRes.size();
+            for (int j = 0; j < resPerPblm; j++) {
+                int currentResValue = currentProblemRes.get(j);
+                double doubleCurrentResValue = currentResValue;
+
+                if (i == 0) {
+                    moyenne.add(doubleCurrentResValue);
+                    min.add(currentResValue);
+                } else {
+                    double currentMoyenne = moyenne.get(j);
+                    moyenne.set(j, currentMoyenne + doubleCurrentResValue);
+
+                    if (min.get(j) > currentResValue) {
+                        min.set(j, currentResValue);
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < moyenne.size(); i++) {
+            double currentMoyenne = moyenne.get(i);
+            moyenne.set(i, currentMoyenne / nbOfPblm);
+        }
+
+        for (int i = 0; i < nbOfPblm; i++) {
+            ArrayList<Integer> currentProblemRes = p_res.get(i);
+
+            //Calc moyenne and min
+            int resPerPblm = currentProblemRes.size();
+            for (int j = 0; j < resPerPblm; j++) {
+                int currentResValue = currentProblemRes.get(j);
+                double doubleCurrentResValue = currentResValue;
+                double diff = doubleCurrentResValue - moyenne.get(j);
+
+                if (i == 0) {
+                    var.add(diff * diff);
+                } else {
+                    var.set(j, var.get(j) + (diff * diff));
+                }
+            }
+        }
+
+        for (int i = 0; i < var.size(); i++) {
+            var.set(i, var.get(i) / nbOfPblm);
+        }
+
+        String eachResVar = "";
+        String eachResAVG = "";
+        String eachResMin = "";
+        int index = 0;
+        while (index < moyenne.size()) {
+            int currentMin = min.get(index);
+            double currentAVG = moyenne.get(index);
+            double currentVar = var.get(index);
+
+            eachResMin += currentMin;
+            eachResVar += currentVar;
+            eachResAVG += currentAVG;
+
+            if (index != moyenne.size() - 1) {
+                eachResAVG += " ";
+                eachResMin += " ";
+                eachResVar += " ";
+            }
+
+            index++;
+        }
+
+        System.out.println(
+                "MIN: " + eachResMin);
+        System.out.println(
+                "AVG: " + eachResAVG);
+        System.out.println(
+                "VAR: " + eachResVar);
     }
 }

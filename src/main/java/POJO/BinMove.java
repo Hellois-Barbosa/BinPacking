@@ -11,15 +11,15 @@ package POJO;
  */
 public class BinMove implements Move {
 
-    private int originPieceIndex;
+    private final int originPieceIndex;
 
-    private int originBinIndex;
+    private final int originBinIndex;
 
-    private int finalBinIndex;
+    private final int finalBinIndex;
 
-    private int piecesNbInOriginalBin;
+    private final int piecesNbInOriginalBin;
 
-    private int piecesNbInFinalBin;
+    private final int piecesNbInFinalBin;
 
     public BinMove(int originPieceIndex, int originBinIndex, int finalBinIndex, int piecesNbInOriginalBin, int piecesNbInFinalBin) {
         this.originPieceIndex = originPieceIndex;

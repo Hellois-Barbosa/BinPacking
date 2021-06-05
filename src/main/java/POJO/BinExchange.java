@@ -11,9 +11,9 @@ package POJO;
  */
 public class BinExchange implements Move {
     
-    private BinMove firstMove;
+    private final BinMove firstMove;
     
-    private BinMove secondMove;
+    private final BinMove secondMove;
     
     public BinExchange(BinMove firstMove, BinMove secondMove) {
         this.firstMove = firstMove;

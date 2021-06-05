@@ -35,11 +35,7 @@ public class NearlyFullBins implements SolutionFitness {
 
     @Override
     public boolean isNewSolutionIsBetter(int p_current_solution_fitness, int p_new_solution_fitness) {
-        if (p_new_solution_fitness > p_current_solution_fitness) {
-            return true;
-        } else {
-            return false;
-        }
+        return p_new_solution_fitness > p_current_solution_fitness;
     }
 
 }
